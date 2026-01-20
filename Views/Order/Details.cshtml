@@ -1,0 +1,200 @@
+@model PastaneProjesi.Models.Order
+
+@{
+    ViewData["Title"] = $"Sipariş #{Model.Id}";
+    bool isAdmin = User.IsInRole("Admin");
+    Layout = isAdmin ? "_AdminLayout" : "_Layout";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h6 class="text-muted text-uppercase mb-1">Sipariş Detayı</h6>
+            <h1 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: var(--color-warm-chocolate);">
+                Sipariş #@Model.Id
+            </h1>
+        </div>
+        <div>
+             @if (isAdmin)
+            {
+                <a asp-action="Manage" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Listeye Dön
+                </a>
+            }
+            else
+            {
+                <a asp-action="History" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Siparişlerim
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Order Items -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Sipariş İçeriği</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Ürün</th>
+                                    <th class="text-center">Fiyat</th>
+                                    <th class="text-center">Adet</th>
+                                    <th class="text-end pe-4">Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                                {
+                                                    <img src="@item.Product.ImageUrl" class="rounded-3 me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light rounded-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                }
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold text-dark">@item.Product?.Name</h6>
+                                                    <small class="text-muted">@item.Product?.Category?.Name</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">@item.Price.ToString("C2")</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border">@item.Quantity</span>
+                                        </td>
+                                        <td class="text-end pe-4 fw-bold">
+                                            @((item.Price * item.Quantity).ToString("C2"))
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <td colspan="3" class="text-end pe-4 py-3 text-muted">Genel Toplam</td>
+                                    <td class="text-end pe-4 py-3 fs-5 fw-bold text-success">@Model.TotalAmount.ToString("C2")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status & Timeline (Visual) -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Sipariş Durumu</h5>
+                    <div class="progress mb-3" style="height: 30px;">
+                        @{
+                            int progress = 0;
+                            string color = "bg-secondary";
+                            switch (Model.Status)
+                            {
+                                case "Ödeme Bekliyor": progress = 25; color = "bg-warning"; break;
+                                case "Hazırlanıyor": progress = 50; color = "bg-info"; break;
+                                case "Kargoya Verildi": progress = 75; color = "bg-primary"; break;
+                                case "Teslim Edildi": progress = 100; color = "bg-success"; break;
+                                case "İptal Edildi": progress = 100; color = "bg-danger"; break;
+                            }
+                        }
+                        <div class="progress-bar @color progress-bar-striped progress-bar-animated" role="progressbar" style="width: @progress%">
+                            @Model.Status
+                        </div>
+                    </div>
+                    @if(Model.Status == "İptal Edildi")
+                    {
+                        <div class="alert alert-danger">Bu sipariş iptal edilmiştir.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="col-lg-4">
+            <!-- Customer Info (Admin Only) -->
+            @if (isAdmin)
+            {
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-light border-start border-4 border-warning">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-user-circle me-2"></i>Müşteri Bilgileri</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><strong>Ad Soyad:</strong> @Model.User?.FullName</li>
+                            <li class="mb-2"><strong>E-posta:</strong> <a href="mailto:@Model.User?.Email" class="text-decoration-none">@Model.User?.Email</a></li>
+                            <li class="mb-2"><strong>Kullanıcı Adı:</strong> @Model.User?.UserName</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Admin Actions -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-cog me-2"></i>Yönetici İşlemleri</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-3">Sipariş durumunu güncellemek için aşağıdaki butonları kullanın.</p>
+                        <div class="d-grid gap-2">
+                            <form asp-action="UpdateStatus" method="post" class="d-grid">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="returnUrl" value="Details" /> 
+                                <!-- Note: Controller needs to support returnUrl or we just redirect to Manage as before. 
+                                     Current controller redirects to Manage. That's acceptable for now. -->
+                                
+                                <button type="submit" name="status" value="Hazırlanıyor" class="btn btn-outline-warning mb-2 text-start">
+                                    <i class="fas fa-cookie me-2"></i>Hazırlanıyor
+                                </button>
+                                <button type="submit" name="status" value="Kargoya Verildi" class="btn btn-outline-primary mb-2 text-start">
+                                    <i class="fas fa-truck me-2"></i>Kargoya Verildi
+                                </button>
+                                <button type="submit" name="status" value="Teslim Edildi" class="btn btn-outline-success mb-2 text-start">
+                                    <i class="fas fa-check-circle me-2"></i>Teslim Edildi
+                                </button>
+                                <hr>
+                                <button type="submit" name="status" value="İptal Edildi" class="btn btn-outline-danger text-start">
+                                    <i class="fas fa-times-circle me-2"></i>İptal Et
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Delivery Info -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Teslimat Bilgileri</h5>
+                    
+                    <div class="mb-4">
+                        <p class="text-muted small text-uppercase fw-bold mb-1">Adres</p>
+                        <p class="mb-0">@Model.DeliveryAddress</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-muted small text-uppercase fw-bold mb-1">Telefon</p>
+                        <p class="mb-0">@Model.Phone</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-muted small text-uppercase fw-bold mb-1">Sipariş Notu</p>
+                        <p class="mb-0 fst-italic">@(string.IsNullOrEmpty(Model.Notes) ? "-" : Model.Notes)</p>
+                    </div>
+
+                    <div class="mb-0">
+                        <p class="text-muted small text-uppercase fw-bold mb-1">Ödeme Yöntemi</p>
+                        <span class="badge bg-secondary">@Model.PaymentMethod</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

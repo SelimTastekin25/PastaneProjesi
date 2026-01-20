@@ -1,0 +1,137 @@
+@model IEnumerable<PastaneProjesi.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Sepetim";
+}
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: var(--color-warm-chocolate);">Sepetim</h2>
+            <p class="text-muted">Lezzetli seçimleriniz sizi bekliyor</p>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 shadow-sm mb-4">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-shopping-basket fa-4x text-muted opacity-50"></i>
+            </div>
+            <h4 class="text-muted mb-4">Sepetinizde henüz ürün bulunmuyor.</h4>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-custom-primary rounded-pill px-5 py-3 shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Alışverişe Başla
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr class="text-muted small text-uppercase">
+                                        <th scope="col" style="min-width: 100px;">Ürün</th>
+                                        <th scope="col" class="text-center">Fiyat</th>
+                                        <th scope="col" class="text-center">Adet</th>
+                                        <th scope="col" class="text-end">Toplam</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                                    {
+                                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 60px;">
+                                                            <i class="fas fa-image"></i>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold text-dark">@item.Product?.Name</h6>
+                                                        <small class="text-muted">@item.Product?.Category?.Name</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">@item.Product?.Price.ToString("C2")</td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="change" value="-1" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 25px; height: 25px; padding: 0;">
+                                                            <i class="fas fa-minus" style="font-size: 0.7rem;"></i>
+                                                        </button>
+                                                    </form>
+                                                    <span class="mx-2 fw-bold">@item.Quantity</span>
+                                                    <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="change" value="1" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 25px; height: 25px; padding: 0;">
+                                                            <i class="fas fa-plus" style="font-size: 0.7rem;"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                            <td class="text-end fw-bold text-success">
+                                                @((item.Quantity * (item.Product?.Price ?? 0)).ToString("C2"))
+                                            </td>
+                                            <td class="text-end">
+                                                <form asp-action="RemoveFromCart" method="post">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-link text-danger p-0 border-0" title="Kaldır">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 rounded-3 bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold mb-4" style="color: var(--color-warm-chocolate);">Sipariş Özeti</h5>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Ara Toplam</span>
+                            <span class="fw-bold">@Model.Sum(x => x.Quantity * (x.Product?.Price ?? 0)).ToString("C2")</span>
+                        </div>
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fs-5 fw-bold text-dark">Genel Toplam</span>
+                            <span class="fs-5 fw-bold text-success">@Model.Sum(x => x.Quantity * (x.Product?.Price ?? 0)).ToString("C2")</span>
+                        </div>
+                        <a asp-action="Checkout" class="btn btn-custom-primary w-100 rounded-pill py-3 shadow-sm mb-3">
+                            <i class="fas fa-check me-2"></i>Siparişi Tamamla
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark w-100 rounded-pill py-2">
+                            Alışverişe Devam Et
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

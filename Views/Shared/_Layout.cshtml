@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sweet Delight Pastanesi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Sweet Delight Pastanesi</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Shop" asp-action="Index">Ürünler</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">Hakkımızda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Contact">İletişim</a>
+                        </li>
+                        
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <!-- Shopping Cart -->
+                            <li class="nav-item">
+                                <a class="nav-link text-dark position-relative" asp-controller="Cart" asp-action="Index">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    @await Component.InvokeAsync("CartSummary")
+                                </a>
+                            </li>
+                            
+                            <!-- User Greeting -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle me-1"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="Dashboard"><i class="fas fa-tachometer-alt me-2"></i>Yönetim Paneli</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fas fa-user-edit me-2"></i>Profilim</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Order" asp-action="History"><i class="fas fa-history me-2"></i>Sipariş Geçmişim</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- Login/Register Links -->
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-sm btn-custom-primary rounded-pill px-3" asp-controller="Account" asp-action="Register">
+                                    Kayıt Ol
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Hero Banner Section -->
+
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row pt-5 pb-4">
+                <div class="col-md-4 mb-4">
+                    <h3 class="footer-brand mb-3">Sweet Delight</h3>
+                    <p class="text-muted small">
+                        Her dilimde mutluluk, her lezzette sanat. Geleneksel tarifleri modern dokunuşlarla buluşturuyoruz.
+                    </p>
+                    <div class="social-links mt-3">
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Kurumsal</h5>
+                    <ul class="list-unstyled footer-menu">
+                        <li><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                        <li><a asp-controller="Home" asp-action="About">Hakkımızda</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">İletişim</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Lezzetlerimiz</h5>
+                    <ul class="list-unstyled footer-menu">
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryName="Özel Gün Pastaları">Özel Gün Pastaları</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryName="Kurabiyeler">Taze Kurabiyeler</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryName="Sütlü Tatlılar">Sütlü Tatlılar</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryName="Soğuk İçecekler">Soğuk İçecekler</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Bize Ulaşın</h5>
+                    <ul class="list-unstyled contact-info">
+                        <li><i class="fas fa-map-marker-alt me-2 text-gold"></i> Atatürk Bulvarı No: 16, İnegöl / Bursa</li>
+                        <li><i class="fas fa-phone me-2 text-gold"></i> +90 (224) 715 00 00</li>
+                        <li><i class="fas fa-envelope me-2 text-gold"></i> info@sweetdelight.com</li>
+                        <li><i class="fas fa-clock me-2 text-gold"></i> Her gün 08:00 - 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom text-center py-3 border-top border-secondary mt-2">
+                <p class="mb-0 small text-muted">&copy; 2026 Sweet Delight Pastanesi. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

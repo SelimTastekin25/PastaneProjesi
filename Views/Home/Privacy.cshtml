@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Gizlilik Politikası";
+}
+
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: var(--color-warm-chocolate);">
+            <i class="fas fa-user-shield me-2 text-warning"></i> Gizlilik ve Güvenlik Politikası
+        </h1>
+        <p class="lead text-muted">Kişisel verileriniz Sweet Delight güvencesi altındadır.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                
+                <h3 class="h4 fw-bold mb-3" style="color: var(--color-warm-chocolate);">1. Genel Bilgilendirme</h3>
+                <p class="text-muted mb-4">
+                    Sweet Delight Pastanesi olarak, sitemizi ziyaret eden ve alışveriş yapan kullanıcılarımızın 
+                    gizliliğine ve kişisel verilerinin korunmasına büyük önem veriyoruz. Bu politika, 
+                    verilerinizin nasıl toplandığı, kullanıldığı ve korunduğu hakkında sizi bilgilendirmek amacıyla hazırlanmıştır.
+                </p>
+
+                <h3 class="h4 fw-bold mb-3" style="color: var(--color-warm-chocolate);">2. Toplanan Veriler</h3>
+                <p class="text-muted mb-4">
+                    Hizmetlerimizi sunabilmek amacıyla, sipariş oluşturma, üyelik işlemleri ve iletişim süreçlerinde 
+                    aşağıdaki veriler toplanabilir:
+                </p>
+                <ul class="text-muted mb-4">
+                    <li>Ad, soyad ve iletişim bilgileri (E-posta, telefon, adres).</li>
+                    <li>Sipariş ve alışveriş geçmişi bilgileri.</li>
+                    <li>Site kullanımına ilişkin log kayıtları ve çerezler.</li>
+                </ul>
+
+                <h3 class="h4 fw-bold mb-3" style="color: var(--color-warm-chocolate);">3. Verilerin Kullanımı</h3>
+                <p class="text-muted mb-4">
+                    Toplanan veriler, siparişlerinizi teslim etmek, sizinle iletişim kurmak, yasal yükümlülüklerimizi 
+                    yerine getirmek ve hizmet kalitemizi artırmak amacıyla kullanılır. Verileriniz, yasal zorunluluklar 
+                    haricinde üçüncü şahıslarla paylaşılmaz.
+                </p>
+
+                <h3 class="h4 fw-bold mb-3" style="color: var(--color-warm-chocolate);">4. Çerez (Cookie) Kullanımı</h3>
+                <p class="text-muted mb-4">
+                    Sitemizde kullanıcı deneyimini iyileştirmek ve tercihlerinizi hatırlamak amacıyla çerezler kullanılmaktadır. 
+                    Tarayıcı ayarlarınızdan çerez kullanımını dilediğiniz zaman engelleyebilirsiniz, ancak bu durumda sitenin 
+                    bazı fonksiyonları çalışmayabilir.
+                </p>
+
+                <h3 class="h4 fw-bold mb-3" style="color: var(--color-warm-chocolate);">5. İletişim</h3>
+                <p class="text-muted mb-0">
+                    Gizlilik politikamızla ilgili her türlü soru ve görüşünüz için <a asp-controller="Home" asp-action="Contact" class="fw-bold text-decoration-none">İletişim</a> 
+                    sayfamızdan bize ulaşabilirsiniz.
+                </p>
+
+                <div class="mt-5 pt-4 border-top text-center text-muted small">
+                    <p class="mb-0">Son Güncelleme: @DateTime.Now.ToString("dd MMMM yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

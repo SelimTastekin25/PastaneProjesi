@@ -1,0 +1,175 @@
+@model IEnumerable<PastaneProjesi.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Ödeme ve Teslimat";
+    decimal total = ViewBag.CartTotal ?? 0;
+}
+
+<div class="container my-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: var(--color-warm-chocolate);">Ödeme ve Teslimat</h2>
+            <p class="text-muted">Siparişinizi tamamlamak için son adım</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Checkout Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-map-marker-alt me-2 text-primary"></i>Teslimat Bilgileri</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Checkout" method="post" id="checkoutForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Telefon Numaranız</label>
+                                <input type="tel" name="phone" class="form-control rounded-3" placeholder="05XX XXX XX XX" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-muted">Teslimat Adresi</label>
+                                <textarea name="deliveryAddress" class="form-control rounded-3" rows="3" placeholder="Mahalle, Cadde, Sokak, Kapı No, İlçe/İl" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-muted">Sipariş Notu (Opsiyonel)</label>
+                                <textarea name="notes" class="form-control rounded-3" rows="2" placeholder="Zile basmayın, paketi kapıya bırakın vb."></textarea>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-5 mb-4 fw-bold text-dark"><i class="fas fa-credit-card me-2 text-primary"></i>Ödeme Yöntemi</h5>
+                        
+                        <div class="payment-methods">
+                            <!-- Kredi Kartı -->
+                            <div class="form-check p-3 border rounded-3 mb-3 payment-option">
+                                <input class="form-check-input mt-2" type="radio" name="paymentMethod" id="creditCard" value="Kredi Kartı" checked>
+                                <label class="form-check-label w-100 d-flex justify-content-between align-items-center ps-2" for="creditCard">
+                                    <span>
+                                        <strong>Kredi / Banka Kartı</strong>
+                                        <small class="d-block text-muted">Kart bilgilerinizle güvenli ödeme yapın</small>
+                                    </span>
+                                    <div class="text-muted fs-5">
+                                        <i class="fab fa-cc-visa me-1"></i>
+                                        <i class="fab fa-cc-mastercard"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Mock Card Form (Visual Only) -->
+                            <div id="cardDetails" class="bg-light p-3 rounded-3 mb-3 ms-4 border-start border-3 border-secondary">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label small text-muted">Kart Üzerindeki İsim</label>
+                                        <input type="text" class="form-control form-control-sm rounded-2">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small text-muted">Kart Numarası</label>
+                                        <input type="text" class="form-control form-control-sm rounded-2" placeholder="0000 0000 0000 0000">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">Ay / Yıl</label>
+                                        <div class="d-flex gap-2">
+                                            <input type="text" class="form-control form-control-sm rounded-2" placeholder="MM">
+                                            <input type="text" class="form-control form-control-sm rounded-2" placeholder="YY">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">CVV</label>
+                                        <input type="text" class="form-control form-control-sm rounded-2" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Havale / EFT -->
+                            <div class="form-check p-3 border rounded-3 mb-3 payment-option">
+                                <input class="form-check-input mt-2" type="radio" name="paymentMethod" id="bankTransfer" value="Havale/EFT">
+                                <label class="form-check-label w-100 d-flex justify-content-between align-items-center ps-2" for="bankTransfer">
+                                    <span>
+                                        <strong>Havale / EFT</strong>
+                                        <small class="d-block text-muted">Sipariş sonrası IBAN bilgilerini göreceksiniz</small>
+                                    </span>
+                                    <i class="fas fa-university text-muted fs-5"></i>
+                                </label>
+                            </div>
+
+                            <!-- Kapıda Ödeme -->
+                            <div class="form-check p-3 border rounded-3 mb-3 payment-option">
+                                <input class="form-check-input mt-2" type="radio" name="paymentMethod" id="cashOnDelivery" value="Kapıda Ödeme">
+                                <label class="form-check-label w-100 d-flex justify-content-between align-items-center ps-2" for="cashOnDelivery">
+                                    <span>
+                                        <strong>Kapıda Ödeme</strong>
+                                        <small class="d-block text-muted">Teslimat sırasında nakit veya kartla ödeyin</small>
+                                    </span>
+                                    <i class="fas fa-hand-holding-usd text-muted fs-5"></i>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-custom-primary w-100 rounded-pill py-3 shadow-sm mt-4 fw-bold fs-5">
+                            Siparişi Onayla (@total.ToString("C2"))
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4" style="color: var(--color-warm-chocolate);">Özet</h5>
+                    
+                    <ul class="list-group list-group-flush mb-3 bg-transparent">
+                        @foreach (var item in Model)
+                        {
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <small class="fw-bold d-block">@item.Product?.Name</small>
+                                    <small class="text-muted">@item.Quantity Adet</small>
+                                </div>
+                                <span class="text-muted small">@((item.Quantity * (item.Product?.Price ?? 0)).ToString("C2"))</span>
+                            </li>
+                        }
+                    </ul>
+                    
+                    <div class="d-flex justify-content-between mb-3 border-top pt-3">
+                        <span class="text-muted">Ara Toplam</span>
+                        <span class="fw-bold">@total.ToString("C2")</span>
+                    </div>
+                    
+                    <!-- Free shipping logic could go here -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Teslimat Ücreti</span>
+                        <span class="text-success small fw-bold">Ücretsiz</span>
+                    </div>
+
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between">
+                        <span class="fs-5 fw-bold text-dark">Genel Toplam</span>
+                        <span class="fs-5 fw-bold text-success">@total.ToString("C2")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Toggle card details visibility
+            $('input[name="paymentMethod"]').change(function() {
+                if ($(this).val() === 'Kredi Kartı') {
+                    $('#cardDetails').slideDown();
+                } else {
+                    $('#cardDetails').slideUp();
+                }
+            });
+            
+            // Initial state
+            if (!$('#creditCard').is(':checked')) {
+                 $('#cardDetails').hide();
+            }
+        });
+    </script>
+}

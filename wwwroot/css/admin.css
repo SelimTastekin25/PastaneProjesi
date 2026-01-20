@@ -1,0 +1,152 @@
+/* Admin Dashboard Styles */
+:root {
+    --sidebar-width: 250px;
+    --sidebar-bg: #2c3e50;
+    --sidebar-color: #ecf0f1;
+    --primary-color: #ff9f43;
+    /* Pastane Orange */
+    --secondary-color: #5f27cd;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar */
+#sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-color);
+    padding: 20px;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #1a252f;
+    margin: -20px -20px 20px -20px;
+    text-align: center;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+#sidebar ul.components li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: var(--sidebar-color);
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+#sidebar ul.components li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#sidebar ul.components li.active>a {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.content-wrapper {
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+    width: calc(100% - var(--sidebar-width));
+}
+
+/* Stats Cards */
+.stats-card {
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #4e54c8, #8f94fb);
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, #11998e, #38ef7d);
+}
+
+.stats-card .icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stats-card h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.stats-card p {
+    font-size: 1.1rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* Advanced Table */
+.dashboard-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: #fff3e0 !important;
+    /* Soft orange hover */
+}
+
+/* Stock Warning */
+.low-stock-row {
+    background-color: #ffebee;
+}
+
+.low-stock-badge {
+    background-color: #ef5350;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+/* Helper */
+.search-container {
+    position: relative;
+}
+
+.search-container i {
+    position: absolute;
+    left: 15px;
+    top: 12px;
+    color: #aaa;
+}
+
+.search-input {
+    padding-left: 40px;
+    border-radius: 20px;
+}

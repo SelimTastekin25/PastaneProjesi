@@ -1,0 +1,114 @@
+@model List<PastaneProjesi.Models.Order>
+
+@{
+    ViewData["Title"] = "Sipariş Geçmişim";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: var(--color-warm-chocolate); font-family: 'Playfair Display', serif;">
+            <i class="fas fa-history me-2"></i> Sipariş Geçmişim
+        </h2>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-custom-outline">
+            <i class="fas fa-shopping-bag me-2"></i> Alışverişe Dön
+        </a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-5">
+            <div class="mb-4 text-muted opacity-50">
+                <i class="fas fa-receipt fa-4x"></i>
+            </div>
+            <h4>Henüz siparişiniz bulunmuyor.</h4>
+            <p class="text-muted mb-4">Lezzetli ürünlerimizi keşfetmek için hemen alışverişe başlayın!</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-custom-primary rounded-pill px-4">
+                Ürünleri İncele
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var order in Model)
+            {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <span class="text-muted small d-block">Sipariş Tarihi</span>
+                                <span class="fw-bold text-dark">@order.OrderDate.ToString("dd MMMM yyyy HH:mm")</span>
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Sipariş No</span>
+                                <span class="badge bg-light text-dark border">#@order.Id</span>
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Durum</span>
+                                @if (order.Status == "Teslim Edildi")
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                                        <i class="fas fa-check-circle me-1"></i> @order.Status
+                                    </span>
+                                }
+                                else if (order.Status == "Hazırlanıyor")
+                                {
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">
+                                        <i class="fas fa-clock me-1"></i> @order.Status
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill">
+                                        <i class="fas fa-spinner me-1"></i> @order.Status
+                                    </span>
+                                }
+                            </div>
+                            <div class="text-end ms-auto">
+                                <span class="text-muted small d-block">Toplam Tutar</span>
+                                <span class="fw-bold fs-5" style="color: var(--color-warm-chocolate);">@order.TotalAmount.ToString("C2")</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-borderless align-middle mb-0">
+                                    <thead class="bg-light text-secondary small text-uppercase">
+                                        <tr>
+                                            <th class="ps-4 py-3">Ürün</th>
+                                            <th class="text-center py-3">Adet</th>
+                                            <th class="text-end pe-4 py-3">Fiyat</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <tr class="border-bottom">
+                                                <td class="ps-4 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                                        {
+                                                            <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rounded me-3 d-flex align-items-center justify-content-center bg-light" style="width: 50px; height: 50px;">
+                                                                <i class="fas fa-image text-muted"></i>
+                                                            </div>
+                                                        }
+                                                        <span class="fw-medium text-dark">@item.Product.Name</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center py-3 text-secondary">x @item.Quantity</td>
+                                                <td class="text-end pe-4 py-3 text-dark">@((item.Price * item.Quantity).ToString("C2"))</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

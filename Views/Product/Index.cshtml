@@ -1,0 +1,181 @@
+@model IEnumerable<PastaneProjesi.Models.Product>
+
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+    Layout = "_AdminLayout";
+}
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card bg-gradient-primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3>@ViewBag.TotalProducts</h3>
+                    <p>Toplam Ürün</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-cubes"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-gradient-danger">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3>@ViewBag.CriticalStock</h3>
+                    <p>Kritik Stok (< 5)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-gradient-success">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3>@((ViewBag.AveragePrice as decimal?)?.ToString("C2") ?? "0.00")</h3>
+                    <p>Ortalama Fiyat</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-turkish-lira-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="card shadow rounded-3">
+    <div class="card-header bg-white py-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h5 class="mb-0 text-dark fw-bold">Ürün Listesi</h5>
+            </div>
+            <div class="col-md-6 text-end">
+                <a asp-action="ExportToExcel" class="btn btn-success btn-sm rounded-pill px-4 me-2">
+                    <i class="fas fa-file-excel me-1"></i> Excel Raporu İndir
+                </a>
+                <a asp-action="Create" class="btn btn-primary btn-sm rounded-pill px-4">
+                    <i class="fas fa-plus me-1"></i> Yeni Ürün Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Search and Filter Form -->
+        <form method="get" asp-action="Index" class="mb-4">
+            <div class="row g-3">
+                <!-- Search Input -->
+                <div class="col-md-8">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" 
+                               name="searchString" 
+                               value="@ViewBag.CurrentSearch" 
+                               class="form-control search-input" 
+                               placeholder="Ürün adı veya açıklamasında ara...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Ara
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="fw-bold text-muted me-2">Kategori:</span>
+                        
+                        <!-- "All" Button -->
+                        <a asp-action="Index" 
+                           asp-route-searchString="@ViewBag.CurrentSearch"
+                           class="btn btn-sm @(ViewBag.CurrentCategory == null ? "btn-dark" : "btn-outline-secondary")">
+                            <i class="fas fa-th me-1"></i>Tümü
+                        </a>
+
+                        <!-- Category Buttons -->
+                        @if (ViewBag.Categories != null)
+                        {
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <a asp-action="Index" 
+                                   asp-route-categoryId="@category.Id"
+                                   asp-route-searchString="@ViewBag.CurrentSearch"
+                                   class="btn btn-sm @(ViewBag.CurrentCategory == category.Id ? "btn-dark" : "btn-outline-secondary")">
+                                    @category.Name
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table dashboard-table align-middle" id="productTable">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 80px;">Görsel</th>
+                        <th>Ürün Adı</th>
+                        <th>Kategori</th>
+                        <th>Fiyat</th>
+                        <th>Stok Durumu</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model) {
+                bool isLowStock = item.Stock < 5;
+                <tr class="@(isLowStock ? "low-stock-row" : "")">
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Name" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            }
+                        </td>
+                        <td class="fw-bold text-dark">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            <span class="badge bg-info text-dark">@Html.DisplayFor(modelItem => item.Category!.Name)</span>
+                        </td>
+                        <td class="text-success fw-bold">
+                            @item.Price.ToString("C2")
+                        </td>
+                        <td>
+                            @item.Stock
+                            @if (isLowStock)
+                            {
+                                <span class="low-stock-badge"><i class="fas fa-arrow-down"></i> Kritik</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm me-1" title="Düzenle">
+                                <i class="fas fa-edit"></i>
+                            </a> 
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" title="Sil">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

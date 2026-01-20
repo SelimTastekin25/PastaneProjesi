@@ -1,0 +1,40 @@
+@model int
+
+@{
+    ViewData["Title"] = "Siparişiniz Alındı";
+}
+
+<div class="container my-5 text-center">
+    <div class="card shadow border-0 rounded-4 mx-auto" style="max-width: 600px;">
+        <div class="card-body p-5">
+            <div class="mb-4 text-success">
+                <i class="fas fa-check-circle fa-5x"></i>
+            </div>
+            
+            <h2 class="display-6 fw-bold mb-3" style="font-family: 'Playfair Display', serif; color: var(--color-warm-chocolate);">
+                Teşekkürler!
+            </h2>
+            
+            <p class="lead text-muted mb-4">
+                Siparişiniz başarıyla alındı.
+            </p>
+            
+            <div class="alert alert-light border shadow-sm rounded-3 d-inline-block px-5 py-3 mb-4">
+                <span class="text-muted d-block small text-uppercase">Sipariş Numaranız</span>
+                <span class="fs-4 fw-bold text-dark">#@Model</span>
+            </div>
+            
+            <p class="text-muted mb-5">
+                Siparişinizin durumunu "Hesabım" sayfasından takip edebilirsiniz.
+                <br>
+                Lezzetli anlar dileriz!
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-custom-primary rounded-pill px-4 py-2">
+                    <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
